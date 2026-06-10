@@ -1,13 +1,18 @@
-# Sistema Web Club Deportivo Ricardo Méndez - PRO BLUE
+# Sistema CD Ricardo Méndez - Estadio Real
 
-- Estadio animado con luces y público simulado.
-- Logo del club mantiene sus colores originales, no dorado.
+Mejora aplicada:
+- Fondo principal reemplazado por fotografía real online de estadio con público.
+- Respaldo local incluido: stadium_fallback_publico.svg.
+- Animación de luces, reflectores, partículas y bengalas encima del estadio.
+- Logo del club mantiene colores originales.
 - Letras doradas y azul eléctrico.
-- Cinta superior de auspiciadores con movimiento.
+- Cinta superior de auspiciadores en movimiento.
 - Auspiciadores más claros.
-- Partido destacado con logos grandes.
-- Redes sociales visibles.
-- Admin editable.
-- Clave Admin: ADMINRIMEN1932
+- Supabase y Admin no fueron modificados.
 
-Nota: Para quitar fondo blanco de logos ya guardados en Supabase, vuelve a subirlos desde Admin.
+Clave Admin:
+ADMINRIMEN1932
+
+Importante:
+Para ver la foto real, el navegador debe tener conexión a internet. Si no, carga el respaldo local.
+Después de desplegar, presiona Ctrl + F5 para limpiar caché.

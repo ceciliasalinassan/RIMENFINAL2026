@@ -195,3 +195,141 @@ h1,h2,h3,.topbar b,.side span,.metric b,button,.pill{font-family:'Barlow Condens
 .social-pro a,.floating a{color:white!important;font-family:Arial,sans-serif!important;font-weight:900!important;font-size:25px!important;box-shadow:0 0 18px rgba(0,191,255,.25)}.social-pro .wa{background:#18b95f!important}.social-pro .ig{background:linear-gradient(145deg,#feda75,#d62976,#4f5bd5)!important}.social-pro .fb{background:#1877f2!important}
 .news-card img,.media-card img,.media-card video,.president-card img,.fixture-card img{background:rgba(255,255,255,.06)!important;object-fit:contain!important;filter:brightness(1.05) contrast(1.04)}
 @media(max-width:900px){.sponsor-ticker-frame{height:78px}.ticker-sponsor-img{width:70px!important;height:46px!important}.ticker-sponsor span{font-size:15px}.match-pro-logos{grid-template-columns:1fr}.match-pro-logos strong{font-size:42px!important}.match-logo-img,.match-team img{width:105px!important;height:105px!important}}
+
+
+/* =========================================================
+   ESTADIO REAL CON PÚBLICO + ANIMACIONES
+   Fondo fotográfico online como principal.
+   Si no carga internet, usa respaldo local stadium_fallback_publico.svg.
+========================================================= */
+:root{
+  --stadium-photo:url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=2400&q=88');
+  --stadium-fallback:url('stadium_fallback_publico.svg');
+}
+
+/* Contenedor base */
+.bg{
+  background:
+    linear-gradient(90deg,rgba(0,10,22,.56),rgba(0,0,0,.28)),
+    radial-gradient(circle at 52% 10%,rgba(0,191,255,.16),transparent 34%),
+    var(--stadium-photo),
+    var(--stadium-fallback)!important;
+  background-size:cover,cover,cover,cover!important;
+  background-position:center center,center center,center center,center center!important;
+  animation:realStadiumDrift 22s ease-in-out infinite alternate!important;
+  transform-origin:center center!important;
+}
+
+/* Oscurecido profesional para lectura */
+.bg::before{
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  background:
+    linear-gradient(180deg,rgba(0,0,0,.22),rgba(0,0,0,.34) 55%,rgba(0,0,0,.18)),
+    radial-gradient(circle at 50% 48%,rgba(0,191,255,.08),transparent 46%)!important;
+  opacity:1!important;
+  mix-blend-mode:normal!important;
+  animation:none!important;
+}
+
+/* Capas animadas: reflectores, bengalas y fuegos */
+.bg::after{
+  content:""!important;
+  position:absolute!important;
+  inset:-8%!important;
+  background:
+    radial-gradient(circle at 18% 12%,rgba(255,255,255,.48),transparent 8%),
+    radial-gradient(circle at 82% 12%,rgba(255,255,255,.42),transparent 8%),
+    radial-gradient(circle at 50% 6%,rgba(0,191,255,.36),transparent 10%),
+    linear-gradient(115deg,transparent 0 38%,rgba(0,191,255,.20) 47%,transparent 57% 100%),
+    linear-gradient(72deg,transparent 0 40%,rgba(246,215,122,.16) 48%,transparent 56% 100%),
+    radial-gradient(circle,rgba(0,191,255,.55) 1px,transparent 2px),
+    radial-gradient(circle,rgba(246,215,122,.55) 1px,transparent 2px)!important;
+  background-size:cover,cover,cover,cover,cover,46px 46px,72px 72px!important;
+  opacity:.82!important;
+  mix-blend-mode:screen!important;
+  animation:realLightSweep 8s ease-in-out infinite alternate, realSparkMove 24s linear infinite!important;
+  pointer-events:none!important;
+}
+@keyframes realStadiumDrift{
+  0%{transform:scale(1.02) translateY(0)}
+  100%{transform:scale(1.08) translateY(-14px)}
+}
+@keyframes realLightSweep{
+  0%{filter:brightness(1);transform:translateX(-34px) rotate(-.8deg)}
+  100%{filter:brightness(1.15);transform:translateX(34px) rotate(.8deg)}
+}
+@keyframes realSparkMove{
+  100%{background-position:center,center,center,180px 0,-180px 0,220px 180px,-160px 130px}
+}
+
+/* Ajuste de contraste para que el estadio real se vea y no tape la información */
+main{
+  background:linear-gradient(90deg,rgba(0,0,0,.12),rgba(0,0,0,.03))!important;
+}
+.hero,.section,.metrics{
+  position:relative;
+  z-index:1;
+}
+
+/* Quitar sensación de ilustración en paneles */
+.topbar,.match-card,.metric,.sponsor-card,.news-card,.media-card,.president-card,.fixture-card,.result-card,.story,.table-wrap{
+  background:linear-gradient(145deg,rgba(1,6,14,.78),rgba(3,16,30,.68))!important;
+  backdrop-filter:blur(8px)!important;
+}
+
+/* Cinta de auspiciadores más clara sobre estadio real */
+.sponsor-ticker-frame{
+  background:linear-gradient(90deg,rgba(0,0,0,.58),rgba(2,18,35,.54),rgba(0,0,0,.58))!important;
+  border-color:rgba(0,191,255,.82)!important;
+}
+.ticker-sponsor-img{
+  filter:brightness(1.45) contrast(1.12) saturate(1.08) drop-shadow(0 0 10px rgba(0,191,255,.42))!important;
+}
+.ticker-sponsor span{
+  color:#fff!important;
+  text-shadow:0 2px 8px rgba(0,0,0,.85)!important;
+}
+
+/* Logo del club: mantener original */
+.crest-wrap img,.side img,.team-rimen img{
+  mix-blend-mode:normal!important;
+  filter:drop-shadow(0 0 18px rgba(0,191,255,.65)) drop-shadow(0 0 6px rgba(0,0,0,.9))!important;
+}
+
+/* Letras doradas y azul eléctrico más finas/pro */
+.hero h1{
+  color:#f6d77a!important;
+  font-weight:800!important;
+  letter-spacing:1.4px!important;
+  text-shadow:0 0 16px rgba(246,215,122,.42),0 0 32px rgba(0,191,255,.38),0 8px 22px rgba(0,0,0,.9)!important;
+}
+.hero h2{
+  color:#00bfff!important;
+  font-weight:800!important;
+  letter-spacing:1px!important;
+}
+
+/* Auspiciadores menos oscuros */
+.sponsor-card,.sponsor-card-premium{
+  background:linear-gradient(145deg,rgba(5,21,38,.78),rgba(2,10,20,.66))!important;
+}
+.sponsor-logo-box{
+  background:radial-gradient(circle,rgba(0,191,255,.24),rgba(255,255,255,.08) 55%,rgba(0,0,0,.03))!important;
+}
+.sponsor-logo-box img,.sponsor-img-pro{
+  filter:brightness(1.65) contrast(1.16) saturate(1.08) drop-shadow(0 0 12px rgba(0,191,255,.32))!important;
+}
+
+/* Mejor visual en celulares */
+@media(max-width:900px){
+  .bg{
+    background-position:center!important;
+    animation:realStadiumDriftMobile 18s ease-in-out infinite alternate!important;
+  }
+  @keyframes realStadiumDriftMobile{
+    from{transform:scale(1.06)}
+    to{transform:scale(1.12) translateY(-8px)}
+  }
+}
