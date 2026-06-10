@@ -80,8 +80,8 @@ async function saveAll(d){saveData(d);try{await pushCloud(d);status('Estado: gua
 function status(m){if($('statusLine'))$('statusLine').textContent=m}
 function imgOrText(url,name){return url?`<img src="${url}" alt="${name}" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'sponsor-fallback',textContent:'${String(name||'AUSPICIADOR').replace(/'/g,'')}'}))">`:`<div class="sponsor-fallback">${name||'AUSPICIADOR'}</div>`}
 function renderSponsors(d){$('sponsorsGrid')&&($('sponsorsGrid').innerHTML=(d.sponsors||[]).map(s=>`<article class="sponsor-card"><div class="sponsor-logo-box">${imgOrText(s.url,s.name)}</div><h3>${s.name}</h3></article>`).join(''))}
-function renderPublic(){const d=getData(); if($('homeIntro'))$('homeIntro').textContent=d.homeIntro; renderSponsors(d); $('metrics')&&($('metrics').innerHTML=`<div class="metric"><span>Series</span><b>${d.metrics.series}</b></div><div class="metric"><span>Socios activos</span><b>${d.metrics.members}</b></div><div class="metric"><span>Campeonatos</span><b>${d.metrics.titles}</b></div><div class="metric"><span>Aniversario</span><b>${d.metrics.anniversary}</b></div>`);
- $('nextMatchCard')&&($('nextMatchCard').innerHTML=`<h3 class="featured-title">🔥 Partido destacado</h3><div class="match-pro-logos"><div class="match-team">${proImg(window.CDRM_LOGO,'Ricardo Méndez','match-logo-img')}<span>Ricardo Méndez</span></div><strong>VS</strong><div class="match-team">${proImg(d.nextMatch.logo,d.nextMatch.rival,'match-logo-img')}<span>${d.nextMatch.rival}</span></div></div><h3 class="match-title">Ricardo Méndez vs ${d.nextMatch.rival}</h3><p>${d.nextMatch.date}</p><b>${d.nextMatch.place}</b>`);
+function renderPublic(){const d=getData(); if($('homeIntro'))$('homeIntro').textContent=d.homeIntro; renderSponsors(d); renderSponsorTicker(d); $('metrics')&&($('metrics').innerHTML=`<div class="metric"><span>Series</span><b>${d.metrics.series}</b></div><div class="metric"><span>Socios activos</span><b>${d.metrics.members}</b></div><div class="metric"><span>Campeonatos</span><b>${d.metrics.titles}</b></div><div class="metric"><span>Aniversario</span><b>${d.metrics.anniversary}</b></div>`);
+ $('nextMatchCard')&&($('nextMatchCard').innerHTML=`<h3>🔥 Partido destacado</h3><div class="versus-logos"><div class="team-logo team-rimen">${imgOrText(window.CDRM_LOGO,'Ricardo Méndez')}<span>Ricardo Méndez</span></div><strong>VS</strong><div class="team-logo team-rival">${imgOrText(d.nextMatch.logo,d.nextMatch.rival)}<span>${d.nextMatch.rival}</span></div></div><h3>Ricardo Méndez vs ${d.nextMatch.rival}</h3><p>${d.nextMatch.date}</p><b>${d.nextMatch.place}</b>`);
  $('resultsGrid')&&($('resultsGrid').innerHTML=(d.results||[]).map(r=>`<article class="result-card"><span>${r.date}</span><h3>${r.match}</h3><h2>${r.score}</h2></article>`).join('')||'<article class="result-card">Sin resultados cargados.</article>');
  $('fixtureGrid')&&($('fixtureGrid').innerHTML=(d.fixture_images||[]).map(f=>`<article class="fixture-card"><img src="${f.image}" alt="${f.title}" onerror="this.style.display=\'none\'"><h3>${f.title}</h3></article>`).join(''));
  const sel=$('serieSelect'); if(sel&&!sel.options.length){sel.innerHTML=SERIES.map(s=>`<option>${s}</option>`).join('');sel.onchange=renderPublic}; const serie=sel?sel.value:SERIES[0]; const rows=[...(d.standings[serie]||[])].sort((a,b)=>(+b.pts)-(+a.pts)||(+b.dg)-(+a.dg)); $('standingsRows')&&($('standingsRows').innerHTML=rows.map((r,i)=>`<tr class="${(r.team||'').toLowerCase().includes('méndez')||(r.team||'').toLowerCase().includes('mendez')?'rm':''}"><td>${i+1}</td><td>${r.team}</td><td>${r.pj}</td><td>${r.pg}</td><td>${r.pe}</td><td>${r.pp}</td><td>${r.gf}</td><td>${r.gc}</td><td>${r.dg}</td><td>${r.pts}</td></tr>`).join(''));
@@ -166,84 +166,17 @@ if(originalUploadFile){
 }
 
 
-/* PRO FINAL: mejoras visuales y robustez */
-function proSponsorFallback(img){
-  const name = img.getAttribute('alt') || 'AUSPICIADOR';
-  const box = img.closest('.sponsor-logo-box') || img.parentElement;
-  img.style.display='none';
-  if(box && !box.querySelector('.sponsor-fallback-pro')){
-    const d=document.createElement('div');
-    d.className='sponsor-fallback-pro';
-    d.textContent=name;
-    box.appendChild(d);
-  }
-}
-
-function proImg(url,name,cls=''){
-  if(!url) return `<div class="sponsor-fallback-pro">${name||'SIN IMAGEN'}</div>`;
-  return `<img class="${cls}" src="${url}" alt="${name||''}" onerror="proSponsorFallback(this)">`;
-}
-
-/* Limpieza automática de fondo blanco al subir logos */
-async function proCleanImageFile(file){
-  if(!file || !file.type || !file.type.startsWith('image/')) return file;
-  return new Promise(resolve=>{
-    const img=new Image();
-    const objectUrl=URL.createObjectURL(file);
-    img.onload=()=>{
-      const canvas=document.createElement('canvas');
-      canvas.width=img.naturalWidth||img.width;
-      canvas.height=img.naturalHeight||img.height;
-      const ctx=canvas.getContext('2d');
-      ctx.drawImage(img,0,0);
-      try{
-        const data=ctx.getImageData(0,0,canvas.width,canvas.height);
-        for(let i=0;i<data.data.length;i+=4){
-          const r=data.data[i],g=data.data[i+1],b=data.data[i+2],a=data.data[i+3];
-          if(a>0 && r>232 && g>232 && b>232){
-            data.data[i+3]=0;
-          }else if(a>0 && r>215 && g>215 && b>215){
-            data.data[i+3]=Math.round(a*.18);
-          }
-        }
-        ctx.putImageData(data,0,0);
-        canvas.toBlob(blob=>{
-          URL.revokeObjectURL(objectUrl);
-          if(!blob) return resolve(file);
-          resolve(new File([blob], file.name.replace(/\.[^.]+$/,'')+'.png', {type:'image/png'}));
-        },'image/png');
-      }catch(e){
-        URL.revokeObjectURL(objectUrl);
-        resolve(file);
-      }
-    };
-    img.onerror=()=>{URL.revokeObjectURL(objectUrl);resolve(file)};
-    img.src=objectUrl;
-  });
-}
-
-if(typeof uploadFile==='function' && !window.__proUploadPatched){
-  window.__proUploadPatched=true;
-  const oldUpload=uploadFile;
-  uploadFile=async function(file,folder){
-    const clean=await proCleanImageFile(file);
-    return oldUpload(clean,folder);
-  }
-}
-
-
-/* PRO FINAL: override de auspiciadores */
-function renderSponsors(d){
-  d=d||getData();
-  const el=document.getElementById('sponsorsGrid');
+/* SISTEMA PRO BLUE: cinta superior de auspiciadores */
+function renderSponsorTicker(d){
+  d = d || getData();
+  const el = document.getElementById('sponsorTicker');
   if(!el) return;
-  const list=(d.sponsors&&d.sponsors.length?d.sponsors:(window.CDRM_DEFAULT_SPONSORS||[]));
-  el.innerHTML=list.map(s=>`
-    <article class="sponsor-card sponsor-card-premium">
-      <div class="sponsor-logo-box">
-        ${proImg(s.url,s.name,'sponsor-img-pro')}
-      </div>
-      <h3>${s.name||''}</h3>
-    </article>
+  const list = (d.sponsors && d.sponsors.length ? d.sponsors : (window.CDRM_DEFAULT_SPONSORS || []));
+  const items = [...list, ...list];
+  el.innerHTML = items.map(s => `
+    <div class="ticker-sponsor">
+      <img class="ticker-sponsor-img" src="${s.url||''}" alt="${s.name||''}" onerror="this.style.display='none'">
+      <span>${s.name||''}</span>
+    </div>
   `).join('');
 }

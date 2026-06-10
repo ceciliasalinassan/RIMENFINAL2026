@@ -1,15 +1,13 @@
-# Club Deportivo Ricardo Méndez - PRO FINAL VISUAL
+# Sistema Web Club Deportivo Ricardo Méndez - PRO BLUE
 
-Mejoras aplicadas:
-- Fondo tipo estadio con animación, luces y partículas.
-- Tipografía menos pixelada y más profesional.
+- Estadio animado con luces y público simulado.
+- Logo del club mantiene sus colores originales, no dorado.
+- Letras doradas y azul eléctrico.
+- Cinta superior de auspiciadores con movimiento.
+- Auspiciadores más claros.
 - Partido destacado con logos grandes.
-- Auspiciadores con tarjetas premium.
-- Logos nuevos se limpian automáticamente al subirlos desde Admin.
-- Galerías visualmente mejoradas.
-- Iconos visibles de WhatsApp, Instagram y Facebook.
-- Admin mantiene clave: ADMINRIMEN1932.
-- Supabase se mantiene igual.
+- Redes sociales visibles.
+- Admin editable.
+- Clave Admin: ADMINRIMEN1932
 
-Importante:
-Si un logo ya estaba guardado en Supabase con fondo blanco, vuelve a cargarlo desde Admin para que se procese sin fondo.
+Nota: Para quitar fondo blanco de logos ya guardados en Supabase, vuelve a subirlos desde Admin.
